@@ -1,5 +1,5 @@
 const getCharacter = (scores) => {
-  const maxIndices = getSameScoreIndices(scores)
+  const maxIndices = getIndices(scores)
     
   if(maxIndices.length === 1) return maxIndices[0]
 
@@ -7,11 +7,11 @@ const getCharacter = (scores) => {
     const neighbors = []
 
     for(let j = 0; j < maxIndices.length; j++){
-      const sumNeighbor = getSumNeighbor(maxIndices[j], scores, (i + 1))
+      const sumNeighbor = getNeighbor(maxIndices[j], scores, (i + 1))
       neighbors.push(sumNeighbor)
     }
 
-    const neighborsIndices = getSameScoreIndices(neighbors)
+    const neighborsIndices = getIndices(neighbors)
   
     if(neighborsIndices.length === 1) return maxIndices[neighborsIndices]
   }
@@ -19,14 +19,14 @@ const getCharacter = (scores) => {
   return false
 }
 
-const getMaxScores = (scores) => {
+const getMax = (scores) => {
   return scores.reduce((prev, curr) => {
     return prev > curr ? prev : curr    
   })
 }
 
-const getSameScoreIndices = (scores) => {
-  const max = getMaxScores(scores)
+const getIndices = (scores) => {
+  const max = getMax(scores)
   let indices = []
   for(let i = 0; i < scores.length; i++){
     if(scores[i] === max) indices.push(i)
@@ -36,7 +36,7 @@ const getSameScoreIndices = (scores) => {
   return indices
 }
 
-const getSumNeighbor = (index, scores, turn) =>{
+const getNeighbor = (index, scores, turn) =>{
   const right = (index - turn) < 0 ?  scores[scores.length - turn] : scores[index - turn]
   const left = (index + turn) > scores.length - turn ? scores[0] : scores[index + turn]
 
@@ -78,32 +78,32 @@ test('유형이 여러개다.', () => {
 
 
 test('제일 높은 점수 얻기', () => {
-  const maxSores = getMaxScores([40, 20, 50, 10, 40 , 50, 21, 10, 4])
+  const maxSores = getMax([40, 20, 50, 10, 40 , 50, 21, 10, 4])
   expect(maxSores).toBe(50)
 })
 
 test('가장 큰 점수 가지고 있는 인덱스', () => {
-  const maxSores = getMaxScores([40, 20, 50, 10, 40 , 50, 21, 10, 4])
-  const SameScoreIdex = getSameScoreIndices([40, 20, 50, 10, 40 , 50, 21, 10, 4])
+  const maxSores = getMax([40, 20, 50, 10, 40 , 50, 21, 10, 4])
+  const SameScoreIdex = getIndices([40, 20, 50, 10, 40 , 50, 21, 10, 4])
   expect(SameScoreIdex).toEqual([2, 5])
 })
 
 test('제일 높은 점수들의 이웃한 값의 합', () => {
   // index값이 그냥 중간값
-  const sum1 = getSumNeighbor(5, [40, 20, 50, 10, 40 , 50, 21, 10, 4], 1)
+  const sum1 = getNeighbor(5, [40, 20, 50, 10, 40 , 50, 21, 10, 4], 1)
   expect(sum1).toBe(61)
 
   // index값이 맨 끝 값인 경우
   // left 값이 처음으로
-  const sum2 = getSumNeighbor(8, [40, 20, 50, 10, 40 , 50, 21, 10, 4], 1)
+  const sum2 = getNeighbor(8, [40, 20, 50, 10, 40 , 50, 21, 10, 4], 1)
   expect(sum2).toBe(50)
 
   // index값이 처음 값인 경우
   // right 값이 맨끝으로
-  const sum3 = getSumNeighbor(0, [40, 20, 50, 10, 40 , 50, 21, 10, 4], 1)
+  const sum3 = getNeighbor(0, [40, 20, 50, 10, 40 , 50, 21, 10, 4], 1)
   expect(sum3).toBe(24)
 
   // 2칸 neighbor
-  const sum4 = getSumNeighbor(0, [40, 20, 50, 10, 40 , 50, 21, 10, 4], 2)
+  const sum4 = getNeighbor(0, [40, 20, 50, 10, 40 , 50, 21, 10, 4], 2)
   expect(sum4).toBe(60)
 })
