@@ -1,54 +1,59 @@
 const getCharacter = (scores) => {
-  const maxIndices = getIndices(scores)
-    
-  if(maxIndices.length === 1) return maxIndices[0]
+  const maxIndices = getIndices(range(scores.length), scores);
 
-  for(let i = 0; i < parseInt((scores.length - 1)/2); i++){
-    const neighbors = []
-
-    for(let j = 0; j < maxIndices.length; j++){
-      const sumNeighbor = getNeighbor(maxIndices[j], scores, (i + 1))
-      neighbors.push(sumNeighbor)
+  const step = (indices, turn) => {
+    if (turn > scores.length / 2) {
+      return false;
     }
 
-    const neighborsIndices = getIndices(neighbors)
-  
-    if(neighborsIndices.length === 1) return maxIndices[neighborsIndices]
-  }
-  
-  return false
-}
+    if (indices.length === 1) {
+      return indices[0];
+    }
 
-const getMax = (scores) => {
-  return scores.reduce((prev, curr) => {
-    return prev > curr ? prev : curr    
-  })
-}
-
-const getIndices = (scores) => {
-  const max = getMax(scores)
-  let indices = []
-  for(let i = 0; i < scores.length; i++){
-    if(scores[i] === max) indices.push(i)
-    continue 
+    const points = maxIndices.map(i => getNeighbor(i, scores, turn));
+    return step(getIndices(maxIndices, points), turn + 1);
   }
 
-  return indices
+  return step(maxIndices, 0)
 }
 
-const getNeighbor = (index, scores, turn) =>{
-  const right = (index - turn) < 0 ?  scores[scores.length - turn] : scores[index - turn]
-  const left = (index + turn) > scores.length - turn ? scores[0] : scores[index + turn]
-
-  return right + left  
+const getIndices = (indices, points) => {
+  const maxPoint = Math.max(...points)
+  return flatten(points.map((point, i) => point === maxPoint ? [indices[i]] : []));
 }
+
+const getNeighbor = (index, scores, turn) =>
+  neighbor(scores, index, -turn) + neighbor(scores, index, turn);
+
+const neighbor = (items, index, offset) =>
+  items[(index + offset + items.length) % items.length];
+
+const flatten = xs =>
+  xs.reduce((acc, x) => [...acc, ...(isIterable(x) ? x : [x])], []);
+
+const isIterable = x => x !== null && typeof x[Symbol.iterator] === 'function';
+
+const range = n => [...Array(n)].map((_, i) => i);
 
 test('제일 높은 점수의 유형이 나온다.', () => {
   const character  = getCharacter([40, 20, 50, 36, 15 , 9, 21, 10, 4])
   expect(character).toBe(2)
 })
 
+test('가장 높은 점수를 받은 게 여럿이면 양 옆의 점수를 더해서 활용한다', () => {
+  expect(getCharacter([0, 2, 0, 2, 1])).toBe(3)
+  expect(getCharacter([2, 1, 0, 2, 0])).toBe(0)
+  expect(getCharacter([1, 0, 2, 0, 2])).toBe(4)
+  expect(getCharacter([40, 20, 50, 10, 40 , 50, 21, 10, 4])).toBe(5)
+});
+
+test('가장 높은 점수의 양 옆에 있는 점수의 합이 같으면 그 옆도 활용한다', () => {
+  expect(getCharacter([0, 0, 2, 0, 0, 2, 0, 1])).toBe(5)
+  expect(getCharacter([40, 10, 50, 10, 50 , 10, 50, 10, 4])).toBe(4)
+});
+
 test('제일 높은 점수의 유형이 중복된다.', () => {
+  return;
   // 제일 높은 점수의 index들 뽑기
   // index가 1개 이상
 
@@ -70,22 +75,14 @@ test('제일 높은 점수의 유형이 중복된다.', () => {
   expect(character3).toBe(4)
 })
 
-test('유형이 여러개다.', () => {
+test('유형이 여러 개다.', () => {
   const character  = getCharacter([40, 40, 40, 40, 40 , 40, 40, 40, 40])
   expect(character).toBeFalsy()
-
-})
-
-
-test('제일 높은 점수 얻기', () => {
-  const maxSores = getMax([40, 20, 50, 10, 40 , 50, 21, 10, 4])
-  expect(maxSores).toBe(50)
 })
 
 test('가장 큰 점수 가지고 있는 인덱스', () => {
-  const maxSores = getMax([40, 20, 50, 10, 40 , 50, 21, 10, 4])
-  const SameScoreIdex = getIndices([40, 20, 50, 10, 40 , 50, 21, 10, 4])
-  expect(SameScoreIdex).toEqual([2, 5])
+  const scores = [40, 20, 50, 10, 40 , 50, 21, 10, 4];
+  expect(getIndices(range(scores.length), scores)).toEqual([2, 5])
 })
 
 test('제일 높은 점수들의 이웃한 값의 합', () => {
@@ -106,4 +103,27 @@ test('제일 높은 점수들의 이웃한 값의 합', () => {
   // 2칸 neighbor
   const sum4 = getNeighbor(0, [40, 20, 50, 10, 40 , 50, 21, 10, 4], 2)
   expect(sum4).toBe(60)
+})
+
+test('neighbor', () => {
+  const scores = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  expect(neighbor(scores, 0, -1)).toBe(9);
+  expect(neighbor(scores, 0, 1)).toBe(2);
+  expect(neighbor(scores, 0, -2)).toBe(8);
+  expect(neighbor(scores, 0, 2)).toBe(3);
+})
+
+test('flatten', () => {
+  expect(flatten([1, 2, 3])).toEqual([1, 2, 3]);
+  expect(flatten([1, [2], 3])).toEqual([1, 2, 3]);
+  expect(flatten([[1], [2], [3]])).toEqual([1, 2, 3]);
+})
+
+test('isIterable', () => {
+  expect(isIterable(1)).toBeFalsy();
+  expect(isIterable([1])).toBeTruthy();
+})
+
+test('range', () => {
+  expect(range(3)).toEqual([0, 1, 2])
 })
