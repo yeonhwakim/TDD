@@ -12,8 +12,9 @@
     출력값: 주어진 스킬트리에 순서에 맞게 배울 스킬을 나열한 사람의 수
 
 ## 계획
-  ```skill = "abk"```
-  ```skillTrees = ["acb", "bsek", "aebrk"]```
+  skill = "abk"
+  skillTrees = ["acb", "bsek", "aebrk"]  
+  
   1. 주어진 skill의 경우의 수를 구한다. ["a", "ab", "abk"]  
   2. skillTrees 각각의 skillTree에서 해당 skill 요소들을 구한다. ["ab", "bk", "abk"]  
   3. 2를 돌면서 1에 인덱스가 있는지 확인하며 개수를 구한다.  
