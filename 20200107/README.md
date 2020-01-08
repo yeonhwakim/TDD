@@ -1,6 +1,6 @@
 # 20200107 2020년 첫 코딩도장
 
-[문제 프로그래머스 > 코딩테스트 연습 > 서머코딩/윈터코딩(~2018) > 스킬트리](https://programmers.co.kr/learn/courses/30/lessons/49993)
+[문제 프로그래머스 > 코딩테스트 연습 > 서머코딩/윈터코딩(~2018) > 스킬트리](https://programmers.co.kr/learn/courses/30/lessons/49993)  
 [코딩도장 짝프로그래밍 PR](https://github.com/dal-lab/coding-dojo/pull/48)
 
 ## 이해
