@@ -5,8 +5,8 @@
 // 3. 2를 돌면서 1에 인덱스가 있는지 확인하며 개수를 구한다.  
 
 const getNumberOfCases = (skill) =>{
-  const numberOfCases = [];
-  [...skill].forEach((s, i) => numberOfCases.push((i ? numberOfCases[i-1] : '') + s));
+  const numberOfCases = [''];
+  [...skill].forEach((s, i) => numberOfCases.push((i+1 ? numberOfCases[i] : '') + s));
 
   return numberOfCases;
 };
