@@ -1,0 +1,15 @@
+{
+  "name": "20200114",
+  "version": "1.0.0",
+  "description": "[문제 프로그래머스 > 코딩테스트 연습 > 서머코딩/윈터코딩(~2018) > 소수만들기](https://programmers.co.kr/learn/courses/30/lessons/12977)",
+  "main": "20200114.test.js",
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
+}
